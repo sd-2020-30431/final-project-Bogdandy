@@ -11,6 +11,9 @@ public class InventoryButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
     [SerializeField]
     private Sprite full, empty;
 
+    [SerializeField]
+    private int bagIndex;
+
     public Bag MyBag
     {
         get
@@ -32,13 +35,51 @@ public class InventoryButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
             bag = value;
         }
     }
-    
+
+    public int MyBagIndex
+    {
+        get
+        {
+            return bagIndex;
+        }
+
+        set
+        {
+            bagIndex = value;
+        }
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (bag != null)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            bag.MyBagScript.OpenClose();
+            if (InventoryManager.MyInstance.FromSlot != null && HandScript.MyInstance.MyMoveable != null && HandScript.MyInstance.MyMoveable is Bag)
+            {
+                if(MyBag != null)
+                {
+                    InventoryManager.MyInstance.SwapBags(MyBag, HandScript.MyInstance.MyMoveable as Bag);
+                }
+                else
+                {
+                    Bag aux = (Bag)HandScript.MyInstance.MyMoveable;
+                    aux.MyInventoryButton = this;
+                    aux.Use();
+                    MyBag = aux;
+                    HandScript.MyInstance.Drop();
+                    InventoryManager.MyInstance.FromSlot = null;
+                }
+            }
+            else if (Input.GetKey(KeyCode.LeftShift))
+            {
+                HandScript.MyInstance.TakeMoveable(MyBag);
+            }
+            else if (bag != null)
+            {
+                bag.MyBagScript.OpenClose();
+            }
         }
+
+       
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -51,7 +92,19 @@ public class InventoryButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        //UIManager.MyInstance.HideTooltip();
+       // UIManager.MyInstance.HideTooltip();
     }
 
+    public void RemoveBag()
+    {
+        InventoryManager.MyInstance.RemoveBag(MyBag);
+        MyBag.MyInventoryButton = null;
+
+        foreach (Item item in MyBag.MyBagScript.GetItems())
+        {
+            InventoryManager.MyInstance.AddItem(item);
+        }
+
+        MyBag = null;
+    }
 }

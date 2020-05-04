@@ -1,14 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
 
 public delegate void UpdateStackEvent();
 
-class ObservableStack<T> : Stack<T>
+public class ObservableStack<T> : Stack<T>
 {
     public event UpdateStackEvent OnPush;
     public event UpdateStackEvent OnPop;
     public event UpdateStackEvent OnClear;
+
+    public ObservableStack(ObservableStack<T> items) : base(items)
+    {
+
+    }
+    public ObservableStack()
+    {
+
+    }
+
 
     public new void Push(T item)
     {
@@ -34,6 +45,8 @@ class ObservableStack<T> : Stack<T>
 
     public new void Clear()
     {
+        base.Clear();
+
         if(OnClear != null)
         {
             OnClear();

@@ -10,8 +10,10 @@ public class Bag : Item, IUseable
     [SerializeField]
     private GameObject bagPrefab;
 
-    public BagScript MyBagScript{get; set;}
-    
+    public BagScript MyBagScript{ get; set; }
+
+    public InventoryButton MyInventoryButton { get; set; }
+
     public int MySlots
     {
         get
@@ -33,8 +35,17 @@ public class Bag : Item, IUseable
             MyBagScript = Instantiate(bagPrefab, InventoryManager.MyInstance.transform).GetComponent<BagScript>();
             MyBagScript.AddSlots(slots);
 
-            InventoryManager.MyInstance.AddBag(this);
+            if (MyInventoryButton == null)
+            {
+                InventoryManager.MyInstance.AddBag(this);
+            }
+            else
+            {
+                InventoryManager.MyInstance.AddBag(this, MyInventoryButton);
+            }
+       
         }
+
 
     }
 

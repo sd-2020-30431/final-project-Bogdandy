@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Item : ScriptableObject, IDescribable
+public abstract class Item : ScriptableObject, IDescribable, IMoveable
 {
     [SerializeField]
     private Sprite icon;
@@ -31,6 +31,14 @@ public abstract class Item : ScriptableObject, IDescribable
         get
         {
             return stackSize;
+        }
+    }
+
+    public string MyTitle
+    {
+        get
+        {
+            return this.name.Replace("(Clone)", "").ToUpper();
         }
     }
 
