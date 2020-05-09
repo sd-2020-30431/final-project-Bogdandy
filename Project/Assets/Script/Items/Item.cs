@@ -55,6 +55,14 @@ public abstract class Item : ScriptableObject, IDescribable, IMoveable
         }
     }
 
+    public int MyPrice
+    {
+        get
+        {
+            return price;
+        }
+    }
+
     public void Remove()
     {
         if(MySlot != null)

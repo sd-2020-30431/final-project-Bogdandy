@@ -7,8 +7,32 @@ public class UIManager : MonoBehaviour
 {
     private static UIManager instance;
 
+    private int score = 0;
+    private int stage = 1;
+
+    [SerializeField]
+    private GameObject[] knights;
+
+    [SerializeField]
+    private GameObject[] scoreTextResults;
+
     [SerializeField]
     private GameObject tooltip;
+
+    [SerializeField]
+    private Text knightNoText;
+
+    [SerializeField]
+    private Text scoreText;
+    
+    [SerializeField]
+    private Text stageText;
+
+    [SerializeField]
+    private Text endWindowScore;
+
+    [SerializeField]
+    private GameObject resultWindow;
 
     private Text tooltipText;
 
@@ -25,6 +49,105 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public int MyStage
+    {
+        get
+        {
+            return stage;
+        }
+
+        set
+        {
+            stage = value;
+        }
+    }
+
+    public GameObject MyResultWindow
+    {
+        get
+        {
+            return resultWindow;
+        }
+
+        set
+        {
+            resultWindow = value;
+        }
+    }
+
+    private void FindNoKnights(){
+        int knightNo = 0;
+
+        foreach(GameObject knight in knights)
+        {
+            if (knight.GetComponent<SpriteRenderer>().sprite != null)
+            {
+                knightNo++;
+            }
+        }
+
+        knightNoText.text = "KNIGHTS:  " + knightNo;
+    }
+
+    public void StageValue()
+    {
+        stage++;
+        Debug.Log(stage);
+        if (stage <= 11)
+        {
+            if(stage < 11)
+            {
+                stageText.text = "STAGE: " + stage;
+            }
+        }
+        else
+        {
+            if (score <= 1500)
+            {
+                scoreTextResults[0].SetActive(true);
+            }
+            else if (score <= 3000)
+            {
+                scoreTextResults[1].SetActive(true);
+            }
+            else
+            {
+                scoreTextResults[2].SetActive(true);
+            }
+            endWindowScore.text = "SCORE:  " + score;
+            resultWindow.SetActive(true);
+        }
+    }
+
+    private void ComputeScore()
+    {
+        score = 0;
+        List<Bag> bags = InventoryManager.MyInstance.MyBags;
+
+        foreach (Bag bag in bags)
+        {
+            List<SlotScript> slotScripts = bag.MyBagScript.MySlots;
+
+            foreach (SlotScript slotScript in slotScripts)
+            {
+                int scoreItem;
+                int.TryParse(slotScript.MyStackText.text, out scoreItem);
+                if(slotScript.MyItem != null)
+                {
+                    if (scoreItem == 0) {
+                        score += slotScript.MyItem.MyPrice;
+                    }
+                    else
+                    {
+                        score += scoreItem * slotScript.MyItem.MyPrice;
+                    }
+                }
+            }
+        }
+
+        scoreText.text = "SCORE:  " + score;
+    }
+
     private void Awake()
     {
         tooltipText = tooltip.GetComponentInChildren<Text>();
@@ -32,6 +155,9 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
+        ComputeScore();
+        FindNoKnights();
+
         if (Input.GetKeyDown(KeyCode.B))
         {
             InventoryManager.MyInstance.OpenClose();

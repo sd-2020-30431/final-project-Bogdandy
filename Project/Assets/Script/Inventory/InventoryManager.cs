@@ -66,7 +66,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    /*private void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
         {
@@ -112,7 +112,7 @@ public class InventoryManager : MonoBehaviour
             AddItem(item);
         }
 
-    }
+    }*/
 
     public void OnItemCountChanged(Item item)
     {
@@ -157,6 +157,14 @@ public class InventoryManager : MonoBehaviour
             }
 
             return count;
+        }
+    }
+
+    public List<Bag> MyBags
+    {
+        get
+        {
+            return bags;
         }
     }
 

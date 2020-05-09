@@ -9,7 +9,7 @@ public class LootWindow : MonoBehaviour
     private LootButton[] lootButtons;
     
     private List<List<Item>> pages = new List<List<Item>>();
-    private int[] bagSizes = {4,8,12,16,20};
+    private int[] bagSizes = { 4, 8, 12, 16, 20 };
     private int pageIndex = 0;
 
     [SerializeField]
@@ -30,8 +30,22 @@ public class LootWindow : MonoBehaviour
     List<Item> droppedLoot;
 
     bool check = true;
-    // Start is called before the first frame update
+    bool checkResult = false;
 
+    private static LootWindow instance;
+
+    public static LootWindow MyInstance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<LootWindow>();
+            }
+
+            return instance;
+        }
+    }
     public void Randomize()
     {
         droppedLoot = new List<Item>();
@@ -53,16 +67,37 @@ public class LootWindow : MonoBehaviour
         pageIndex = 0;
         pageNumber.text = pageIndex + 1 + "/" + 1;
         pages = new List<List<Item>>();
-        Debug.Log(droppedLoot.Count);
         CreatePages(droppedLoot);
     }
 
     public void OpenCloseLootWindow()
     {
-        UIManager.MyInstance.OpenClose(this.GetComponent<CanvasGroup>());
-        check = !check;
-        stealButton.interactable = check;
-        runButton.interactable = check;
+        if (UIManager.MyInstance.MyStage <= 11 && checkResult != true)
+        {
+            UIManager.MyInstance.OpenClose(this.GetComponent<CanvasGroup>());
+            check = !check;
+            stealButton.interactable = check;
+            runButton.interactable = check;
+
+            if(UIManager.MyInstance.MyStage == 11)
+            {
+                checkResult = true;
+            }
+        }
+        else
+        {
+            UIManager.MyInstance.StageValue();
+        }
+
+    }
+
+    public void Update()
+    {
+        if (UIManager.MyInstance.MyStage > 10)
+        {
+            stealButton.interactable = false;
+            runButton.interactable = false;
+        }
     }
 
     public void CreatePages(List<Item> droppedLoot)
@@ -100,7 +135,7 @@ public class LootWindow : MonoBehaviour
 
                     if (pages[pageIndex][i] is Bag)
                     {
-                        Bag bag = pages[pageIndex][i] as Bag;
+                        Bag bag = (Bag)pages[pageIndex][i];
 
                         int rand = Random.Range(0, bagSizes.Length - 1);
                         bag.Initialize(bagSizes[rand]);

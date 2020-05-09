@@ -39,7 +39,7 @@ public class LootButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (InventoryManager.MyInstance.AddItem(MyLoot))
+        if (InventoryManager.MyInstance.AddItem(Instantiate(MyLoot)))
         {
             gameObject.SetActive(false);
             lootWindow.RetrieveLoot(MyLoot);

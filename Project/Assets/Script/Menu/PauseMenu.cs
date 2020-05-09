@@ -49,4 +49,15 @@ public class PauseMenu : MonoBehaviour
         Application.Quit();
     }
 
+    public void Reload()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(3);
+    }
+
+    public void LoadCustomizationMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(1);
+    }
 }
